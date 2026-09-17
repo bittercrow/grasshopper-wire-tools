@@ -12,84 +12,68 @@ using System.Linq;
 
 namespace WireTools
 {
-    abstract record BaseGhData(IGH_DocumentObject _ghObject)
+    record ComponentData(IGH_DocumentObject GhObject)
     {
-        private IGH_DocumentObject _ghObject { get; init; }
-        public string Name => _ghObject.Name;
-        public string NickName => _ghObject.NickName;
-        public string Groups => GhGroupData.CreateGhGroupData(_ghObject);
-        public Image Icon => _ghObject.Icon_24x24.ToEto().WithSize(15, 15);
-        public Guid InstanceGuid => _ghObject.InstanceGuid;
-        public bool IsComponent => _ghObject is IGH_Component;
-        public bool IsParam => _ghObject is IGH_Param;
-        public GH_ComponentParamServer Params =>
-            _ghObject is IGH_Component comp ? comp.Params : null;
-
-    }
-
-    record ComponentData(IGH_DocumentObject _ghObject) : BaseGhData(_ghObject)
-    {
-        public RectangleF Bounds => new RectangleF(
-                         _ghObject.Attributes.Bounds.X,
-                         _ghObject.Attributes.Bounds.Y,
-                         _ghObject.Attributes.Bounds.Width,
-                         _ghObject.Attributes.Bounds.Height);
-    }
-
-    record OutputParamData(IGH_Param _ghParam) : BaseGhData(_ghParam)
-    {
-        public new string NickName
+        internal string Name => GhObject.Name;
+        
+        internal string NickName
         {
-            get => _ghParam.NickName;
+            get => GhObject.NickName;
             set
             {
-                if (_ghParam.NickName != value)
+                if (GhObject.NickName != value)
                 {
-                    _ghParam.NickName = value;
+                    GhObject.NickName = value;
                     CanvasRedraw.Redraw();
                 }
             }
         }
-    }
-
-    record InputParamData(IGH_Param _ghParam) : BaseGhData(_ghParam)
-    {
-        public new string NickName
+        
+        internal string Groups => GhGroupData.CreateGhGroupData(GhObject);
+        
+        internal Image Icon => GhObject.Icon_24x24.ToEto().WithSize(15, 15);
+        
+        internal Guid InstanceGuid => GhObject.InstanceGuid;
+        
+        internal bool IsComponent => GhObject is IGH_Component;
+        
+        internal bool IsParam => GhObject is IGH_Param;
+        
+        internal GH_ComponentParamServer Params =>
+            GhObject is IGH_Component comp ? comp.Params : null;
+        
+        internal RectangleF Bounds => new RectangleF(
+                         GhObject.Attributes.Bounds.X,
+                         GhObject.Attributes.Bounds.Y,
+                         GhObject.Attributes.Bounds.Width,
+                         GhObject.Attributes.Bounds.Height);
+        internal string DrawIcon
         {
-            get => _ghParam.NickName;
+            get => DrawIconOptions[(int)GhObject.IconDisplayMode];
             set
             {
-                if (_ghParam.NickName != value)
+                GhObject.IconDisplayMode = (GH_IconDisplayMode)Array.IndexOf(DrawIconOptions, value);
+                CanvasRedraw.Redraw();
+            }
+        }
+
+        internal string WireDisplay
+        {
+            get => WireDisplayOptions[GhObject is IGH_Param param ? (int)param.WireDisplay : 0];
+            set
+            {
+                if (GhObject is IGH_Param param)
                 {
-                    _ghParam.NickName = value;
+                    param.WireDisplay = (GH_ParamWireDisplay)Array.IndexOf(WireDisplayOptions, value);
                     CanvasRedraw.Redraw();
                 }
-            }
-        }
-
-        public string DrawIcon
-        {
-            get => DrawIconOptions[(int)_ghParam.IconDisplayMode];
-            set
-            {
-                _ghParam.IconDisplayMode = (GH_IconDisplayMode)Array.IndexOf(DrawIconOptions, value);
-                CanvasRedraw.Redraw();
-            }
-        }
-
-        public string WireDisplay
-        {
-            get => WireDisplayOptions[(int)_ghParam.WireDisplay];
-            set
-            {
-                _ghParam.WireDisplay = (GH_ParamWireDisplay)Array.IndexOf(WireDisplayOptions, value);
-                CanvasRedraw.Redraw();
             }
         }
 
         internal static readonly string[] DrawIconOptions = { "Icon", "UseAppSetting", "Text" };
 
         internal static readonly string[] WireDisplayOptions = { "Default", "Faint", "Hidden" };
+
     }
 
     static class GhGroupData

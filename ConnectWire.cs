@@ -21,8 +21,8 @@ namespace WireTools
     class ConnectWireForm : Form
     {
         readonly FilterCollection<ComponentData> _candidateRows = new FilterCollection<ComponentData>();
-        readonly FilterCollection<InputParamData> _inputRows = new FilterCollection<InputParamData>();
-        readonly FilterCollection<OutputParamData> _outputRows = new FilterCollection<OutputParamData>();
+        readonly FilterCollection<ComponentData> _inputRows = new FilterCollection<ComponentData>();
+        readonly FilterCollection<ComponentData> _outputRows = new FilterCollection<ComponentData>();
         readonly GridView _candidateGridView;
         readonly GridView _leftGridView;
         readonly GridView _rightGridView;
@@ -208,7 +208,6 @@ namespace WireTools
         {
             var gridView = new GridView
             {
-                TabIndex = 1,
                 ShowHeader = true,
                 AllowMultipleSelection = true,
                 DataStore = _candidateRows,
@@ -397,21 +396,21 @@ namespace WireTools
             foreach (var item in selectedItems)
             {
                 var guids = _outputRows.Select(r => r.InstanceGuid);
+
                 if (item.GhObject is IGH_Component component)
                 {
                     component.Params.Output
                         .Where(param => !guids.Contains(param.InstanceGuid)).ToList()
-                        .ForEach(param => { _outputRows.Add(new OutputParamData(param)); });
+                        .ForEach(param => { _outputRows.Add(new ComponentData(param)); });
                 }
                 else if (item.GhObject is IGH_Param param)
                 {
                     if (!guids.Contains(param.InstanceGuid))
                     {
-                        _outputRows.Add(new OutputParamData(param));
+                        _outputRows.Add(new ComponentData(param));
                     }
                 }
             }
-           ;
         }
 
         void AddInputParamData()
@@ -420,24 +419,24 @@ namespace WireTools
                 ? _ghDocument.SelectedObjects().Select(obj => new ComponentData(obj))
                 : _candidateGridView.SelectedItems.OfType<ComponentData>();
 
+            var guids = _inputRows.Select(r => r.InstanceGuid);
+
             foreach (var item in selectedItems)
             {
-                var guids = _inputRows.Select(r => r.InstanceGuid);
-                if (item.GhObject is IGH_Component component)
+                if (item.IsComponent)
                 {
-                    component.Params.Input
+                    item.Params.Input
                         .Where(param => !guids.Contains(param.InstanceGuid)).ToList()
-                        .ForEach(param => { _inputRows.Add(new InputParamData(param)); });
+                        .ForEach(param => { _inputRows.Add(new ComponentData(param)); });
                 }
-                else if (item.GhObject is IGH_Param param)
+                else if (item.IsParam)
                 {
-                    if (!guids.Contains(param.InstanceGuid))
+                    if (!guids.Contains(item.InstanceGuid))
                     {
-                        _inputRows.Add(new InputParamData(param));
+                        _inputRows.Add(item);
                     }
                 }
             }
-           ;
         }
         #endregion
 
@@ -446,7 +445,6 @@ namespace WireTools
         {
             var gridView = new GridView
             {
-                TabIndex = 2,
                 ShowHeader = true,
                 AllowMultipleSelection = true,
                 DataStore = _outputRows,
@@ -461,7 +459,7 @@ namespace WireTools
                 HeaderText = ColumnHeaders.Icon.Text,
                 Editable = false,
                 Resizable = false,
-                DataCell = new ImageViewCell { Binding = Binding.Property<OutputParamData, Image>(r => r.Icon) }
+                DataCell = new ImageViewCell { Binding = Binding.Property<ComponentData, Image>(r => r.Icon) }
             });
 
             gridView.Columns.Add(new GridColumn
@@ -469,7 +467,7 @@ namespace WireTools
                 Sortable = true,
                 HeaderText = ColumnHeaders.Name.Text,
                 Editable = false,
-                DataCell = new TextBoxCell { Binding = Binding.Property<OutputParamData, string>(r => r.Name) }
+                DataCell = new TextBoxCell { Binding = Binding.Property<ComponentData, string>(r => r.Name) }
             });
 
             gridView.Columns.Add(new GridColumn
@@ -477,7 +475,7 @@ namespace WireTools
                 Sortable = true,
                 HeaderText = ColumnHeaders.NickName.Text,
                 Editable = true,
-                DataCell = new TextBoxCell { Binding = Binding.Property<OutputParamData, string>(r => r.NickName) }
+                DataCell = new TextBoxCell { Binding = Binding.Property<ComponentData, string>(r => r.NickName) }
             });
 
             gridView.Columns.Add(new GridColumn
@@ -485,7 +483,7 @@ namespace WireTools
                 Sortable = true,
                 HeaderText = ColumnHeaders.Groups.Text,
                 Editable = false,
-                DataCell = new TextBoxCell { Binding = Binding.Property<OutputParamData, string>(r => r.Groups) }
+                DataCell = new TextBoxCell { Binding = Binding.Property<ComponentData, string>(r => r.Groups) }
             });
 
             return gridView;
@@ -504,7 +502,7 @@ namespace WireTools
                 {
                     if (sender is GridView gridView)
                     {
-                        gridView.SelectedItems.OfType<OutputParamData>()
+                        gridView.SelectedItems.OfType<ComponentData>()
                            .ToList()
                            .ForEach(item => _outputRows.Remove(item));
                     }
@@ -528,7 +526,6 @@ namespace WireTools
         {
             var gridView = new GridView
             {
-                TabIndex = 3,
                 ShowHeader = true,
                 AllowMultipleSelection = true,
                 DataStore = _inputRows,
@@ -543,7 +540,7 @@ namespace WireTools
                 HeaderText = ColumnHeaders.Icon.Text,
                 Editable = false,
                 Resizable = false,
-                DataCell = new ImageViewCell { Binding = Binding.Property<InputParamData, Image>(r => r.Icon) }
+                DataCell = new ImageViewCell { Binding = Binding.Property<ComponentData, Image>(r => r.Icon) }
             });
 
             gridView.Columns.Add(new GridColumn
@@ -551,7 +548,7 @@ namespace WireTools
                 Sortable = true,
                 HeaderText = ColumnHeaders.Name.Text,
                 Editable = false,
-                DataCell = new TextBoxCell { Binding = Binding.Property<InputParamData, string>(r => r.Name) }
+                DataCell = new TextBoxCell { Binding = Binding.Property<ComponentData, string>(r => r.Name) }
             });
 
             gridView.Columns.Add(new GridColumn
@@ -559,7 +556,7 @@ namespace WireTools
                 Sortable = true,
                 HeaderText = ColumnHeaders.NickName.Text,
                 Editable = true,
-                DataCell = new TextBoxCell { Binding = Binding.Property<InputParamData, string>(r => r.NickName) }
+                DataCell = new TextBoxCell { Binding = Binding.Property<ComponentData, string>(r => r.NickName) }
             });
 
             gridView.Columns.Add(new GridColumn
@@ -567,7 +564,7 @@ namespace WireTools
                 Sortable = true,
                 HeaderText = ColumnHeaders.Groups.Text,
                 Editable = false,
-                DataCell = new TextBoxCell { Binding = Binding.Property<InputParamData, string>(r => r.Groups) }
+                DataCell = new TextBoxCell { Binding = Binding.Property<ComponentData, string>(r => r.Groups) }
             });
 
             gridView.Columns.Add(new GridColumn
@@ -576,8 +573,8 @@ namespace WireTools
                 Editable = true,
                 DataCell = new ComboBoxCell
                 {
-                    DataStore = InputParamData.DrawIconOptions,
-                    Binding = Binding.Property<InputParamData, object>(r => r.DrawIcon)
+                    DataStore = ComponentData.DrawIconOptions,
+                    Binding = Binding.Property<ComponentData, object>(r => r.DrawIcon)
                 }
             });
 
@@ -587,8 +584,8 @@ namespace WireTools
                 Editable = true,
                 DataCell = new ComboBoxCell
                 {
-                    DataStore = InputParamData.WireDisplayOptions,
-                    Binding = Binding.Property<InputParamData, object>(r => r.WireDisplay)
+                    DataStore = ComponentData.WireDisplayOptions,
+                    Binding = Binding.Property<ComponentData, object>(r => r.WireDisplay)
                 }
             });
 
@@ -608,9 +605,7 @@ namespace WireTools
                 {
                     if (sender is GridView gridView)
                     {
-                        gridView.SelectedItems.OfType<InputParamData>()
-                           .ToList()
-                           .ForEach(item => _inputRows.Remove(item));
+                        foreach (ComponentData item in gridView.SelectedItems) { _inputRows.Remove(item); }
                     }
                     e.Handled = true;
                     break;
