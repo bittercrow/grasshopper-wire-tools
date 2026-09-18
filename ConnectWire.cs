@@ -37,6 +37,7 @@ namespace WireTools
         /// </summary>
         internal ConnectWireForm()
         {
+            TryUpdateGhDocument();
             var editor = Instances.EtoDocumentEditor;
 
             // Layout
@@ -75,7 +76,7 @@ namespace WireTools
             Padding = new Padding(5);
             Owner = editor ?? throw new InvalidOperationException("Grasshopper not found.");
             Content = layout;
-            this.UseRhinoStyle(); //Rhino.UI.EtoExtensions.UseRhinoStyle(this);
+            this.UseRhinoStyle();
         }
 
         #region SearchBox
@@ -502,9 +503,7 @@ namespace WireTools
                 {
                     if (sender is GridView gridView)
                     {
-                        gridView.SelectedItems.OfType<ComponentData>()
-                           .ToList()
-                           .ForEach(item => _outputRows.Remove(item));
+                        foreach (ComponentData item in gridView.SelectedItems.ToArray()) { _outputRows.Remove(item); }
                     }
                     e.Handled = true;
                     break;
@@ -605,7 +604,7 @@ namespace WireTools
                 {
                     if (sender is GridView gridView)
                     {
-                        foreach (ComponentData item in gridView.SelectedItems) { _inputRows.Remove(item); }
+                        foreach (ComponentData item in gridView.SelectedItems.ToArray()) { _inputRows.Remove(item); }
                     }
                     e.Handled = true;
                     break;
@@ -693,8 +692,20 @@ namespace WireTools
     {
         internal static void ShowForm()
         {
+            var doc = Instances.ActiveCanvas?.Document;
+            if (doc == null)
+            {
+                MessageBox.Show(
+                    "No active document found. Please open or create a new document to proceed.",
+                    "Wire Tools",
+                    MessageBoxButtons.OK,
+                    MessageBoxType.Warning);
+
+                return;
+            }
+
             var form = new ConnectWireForm();
-            Rhino.UI.EtoExtensions.Show(form, Rhino.RhinoDoc.ActiveDoc);
+            form.Show();
         }
     }
 }
