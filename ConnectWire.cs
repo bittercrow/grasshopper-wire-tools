@@ -37,7 +37,7 @@ namespace WireTools
         /// </summary>
         internal ConnectWireForm()
         {
-            TryUpdateGhDocument();
+            //TryUpdateGhDocument();
             var editor = Instances.EtoDocumentEditor;
 
             // Layout
@@ -96,7 +96,7 @@ namespace WireTools
         {
             if (string.IsNullOrEmpty(e.OldText) && !string.IsNullOrEmpty(e.NewText))
             {
-                RefreshComponentData();
+                //RefreshComponentData();
                 SetCurrentView();
             }
         }
@@ -117,7 +117,7 @@ namespace WireTools
 
             _ghDocument = doc;
             return true;
-        }
+        } 
 
         bool TryBuildRows()
         {
@@ -686,6 +686,14 @@ namespace WireTools
             throw new NotImplementedException();
 
         }
+
+        #region Overrides
+        protected override void OnGotFocus(EventArgs e)
+        {
+            base.OnGotFocus(e);
+            RefreshComponentData();
+        }
+        #endregion
     }
 
     static class ConnectWire
