@@ -42,7 +42,7 @@ namespace WireTools
         internal GH_ComponentParamServer Params =>
             GhObject is IGH_Component comp ? comp.Params : null;
         
-        internal RectangleF Bounds => new RectangleF(
+        internal RectangleF Bounds => new(
                          GhObject.Attributes.Bounds.X,
                          GhObject.Attributes.Bounds.Y,
                          GhObject.Attributes.Bounds.Width,
@@ -80,13 +80,8 @@ namespace WireTools
     {
         internal static string CreateGhGroupData(IGH_DocumentObject obj)
         {
-            var ghDoc = Instances.ActiveCanvas?.Document;
-
-            if (ghDoc == null)
-            {
-                throw new ArgumentException("No grasshopper document");
-            }
-
+            var ghDoc = (Instances.ActiveCanvas?.Document) ?? throw new ArgumentException("No grasshopper document");
+            
             var guid = obj.Attributes.IsTopLevel
                                 ? obj.InstanceGuid
                                 : obj.Attributes.GetTopLevel.InstanceGuid;
