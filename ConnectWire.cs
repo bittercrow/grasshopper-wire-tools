@@ -37,7 +37,7 @@ namespace WireTools
         /// </summary>
         internal ConnectWireForm()
         {
-            //TryUpdateGhDocument();
+            //HACK: TryUpdateGhDocument();
             var editor = Instances.EtoDocumentEditor;
 
             // Layout
@@ -96,7 +96,7 @@ namespace WireTools
         {
             if (string.IsNullOrEmpty(e.OldText) && !string.IsNullOrEmpty(e.NewText))
             {
-                //RefreshComponentData();
+                //HACK: RefreshComponentData();
                 SetCurrentView();
             }
         }
@@ -626,7 +626,7 @@ namespace WireTools
         #region Connect Button
         IEnumerable<Control> CreateButtons()
         {
-
+            // TODO: Change to Connect Button
             //var removeButton = new Button { Text = "Create" };
             //removeButton.Click += OnRemoveButtonClicked;
 
@@ -677,7 +677,7 @@ namespace WireTools
         #endregion
 
 
-
+        // UNDONE: Button Events
         void OnUpdateButtonClicked(object sender, EventArgs e) => RefreshComponentData();
 
         void OnCreateButtonClicked(object sender, EventArgs e)
