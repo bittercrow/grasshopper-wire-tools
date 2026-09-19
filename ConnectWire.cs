@@ -18,6 +18,12 @@ using System.Text.RegularExpressions;
 
 namespace WireTools
 {
+    #region TODOs 
+    // TODO: add 3 states to sorting by clicking on headers
+    // todo: grey out rows which are not in the current document
+    // todo: feat: add connect button 
+    #endregion
+
     class ConnectWireForm : Form
     {
         readonly FilterCollection<ComponentData> _candidateRows = new FilterCollection<ComponentData>();
