@@ -11,6 +11,7 @@ using Rhino.UI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
@@ -22,6 +23,9 @@ namespace WireTools
     // TODO: add 3 states to sorting by clicking on headers
     // todo: grey out rows which are not in the current document
     // todo: feat: add connect button 
+    // todo: feat: add undo list
+    // todo: feat: change rows order manually
+    // todo: feat: resolve
     #endregion
 
     class ConnectWireForm : Form
@@ -75,7 +79,7 @@ namespace WireTools
             layout.EndVertical();
 
             // Row 4: Buttons
-            layout.AddSeparateRow(null, null, false, false, CreateButtons());
+            layout.AddSeparateRow(null, null, false, false, WireButtons());
 
             // Form
             Title = "Connect Wire";
@@ -123,7 +127,7 @@ namespace WireTools
 
             _ghDocument = doc;
             return true;
-        } 
+        }
 
         bool TryBuildRows()
         {
@@ -264,18 +268,19 @@ namespace WireTools
 
         void SortByColumn(GridColumn column)
         {
+            // 
             switch (column.HeaderText)
             {
                 case var h when h == ColumnHeaders.Name.Text:
-                    _candidateRows.Sort = (r1, r2) => String.Compare(r1.Name, r2.Name);
+                _candidateRows.Sort = (r1, r2) => String.Compare(r1.Name, r2.Name);
                 break;
 
                 case var h when h == ColumnHeaders.NickName.Text:
-                    _candidateRows.Sort = (r1, r2) => String.Compare(r1.NickName, r2.NickName);
+                _candidateRows.Sort = (r1, r2) => String.Compare(r1.NickName, r2.NickName);
                 break;
-                
+
                 case var h when h == ColumnHeaders.Groups.Text:
-                    _candidateRows.Sort = (r1, r2) => String.Compare(r1.Groups, r2.Groups);
+                _candidateRows.Sort = (r1, r2) => String.Compare(r1.Groups, r2.Groups);
                 break;
             }
            ;
@@ -630,20 +635,83 @@ namespace WireTools
         #endregion
 
         #region Connect Button
-        IEnumerable<Control> CreateButtons()
+        IEnumerable<Control> WireButtons()
         {
-            // TODO: Change to Connect Button
-            //var removeButton = new Button { Text = "Create" };
-            //removeButton.Click += OnRemoveButtonClicked;
+            var wireButton = new Button { Text = "Wire" };
+            wireButton.Click += OnWireButtonClicked;
 
-            var connectButton = new Button { Text = "Connect" };
-            connectButton.Click += OnConnectButtonClicked;
+            var unwireButton = new Button { Text = "Unwire" };
+            unwireButton.Click += OnUnwireButtonClicked;
 
-            return new Control[] { null, connectButton, null };
+            return new Control[] { null, wireButton, null, unwireButton, null };
+        }
+
+        void OnWireButtonClicked(object sender, EventArgs e)
+        {
+            WireComponents();
+        }
+
+        void OnUnwireButtonClicked(object sender, EventArgs e)
+        {
+            UnwireComponents();
+        }
+
+        void WireComponents()
+        {
+            var outputParams = _leftGridView.SelectedRows
+                .OrderBy(i => i)
+                .Select(i => _outputRows[i])
+                .Select(r => r.GhObject is IGH_Param p ? p : null);
+
+            var inputParams = _rightGridView.SelectedRows
+                .OrderBy(i => i)
+                .Select(i => _inputRows[i])
+                .Select(r => r.GhObject is IGH_Param p ? p : null);
+
+            foreach (var input in inputParams)
+            {
+                foreach (var output in outputParams)
+                {
+                    if (!input.Sources.Contains(output))
+                    {
+                        input.AddSource(output);
+                    }
+                }
+            }
+
+            Recompute(false);
+        }
+
+        void UnwireComponents()
+        {
+            var outputParams = _leftGridView.SelectedItems.OfType<ComponentData>()
+                            .Select(r => (IGH_Param)r.GhObject);
+
+            var inputParams = _rightGridView.SelectedItems.OfType<ComponentData>()
+                            .Select(r => (IGH_Param)r.GhObject);
+
+            foreach (var input in inputParams)
+            {
+                foreach (var output in outputParams)
+                {
+                    if (input.Sources.Contains(output))
+                    {
+                        input.RemoveSource(output);
+                    }
+                }
+            }
+
+            Recompute(false);
+        }
+
+        void Recompute(bool expireAllObjects)
+        {
+            _ghDocument?.NewSolution(expireAllObjects);
         }
         #endregion
 
         #region Create Context Menu
+        // undone: context menu
         ContextMenu CreateContextMenu()
         {
             var drawIconItem = new ButtonMenuItem { Text = "Draw Icon" };
@@ -663,6 +731,7 @@ namespace WireTools
 
         void OnDrawIconMenuItemClicked(object sender, EventArgs e)
         {
+            // Undone: OnDrawIconMenuItemClicked
             throw new NotImplementedException();
 
             //if (sender is not ButtonMenuItem menuItem)
@@ -685,13 +754,6 @@ namespace WireTools
 
         // UNDONE: Button Events
         void OnUpdateButtonClicked(object sender, EventArgs e) => RefreshComponentData();
-
-        void OnCreateButtonClicked(object sender, EventArgs e)
-        {
-
-            throw new NotImplementedException();
-
-        }
 
         #region Overrides
         protected override void OnGotFocus(EventArgs e)
