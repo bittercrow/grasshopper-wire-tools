@@ -278,7 +278,6 @@ namespace WireTools
                     _candidateRows.Sort = (r1, r2) => String.Compare(r1.Groups, r2.Groups);
                 break;
             }
-           ;
         }
 
         void OnSelectedItemsChanged(object sender, EventArgs e)
@@ -295,7 +294,6 @@ namespace WireTools
                     .Select(data => data.Bounds);
 
                 CandidateView(allBounds);
-
             }
         }
 
@@ -679,18 +677,14 @@ namespace WireTools
         {
             throw new NotImplementedException();
         }
-
         #endregion
-
 
         // UNDONE: Button Events
         void OnUpdateButtonClicked(object sender, EventArgs e) => RefreshComponentData();
 
         void OnCreateButtonClicked(object sender, EventArgs e)
         {
-
             throw new NotImplementedException();
-
         }
 
         #region Overrides
