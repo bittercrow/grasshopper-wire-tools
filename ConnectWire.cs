@@ -685,10 +685,10 @@ namespace WireTools
         void UnwireComponents()
         {
             var outputParams = _leftGridView.SelectedItems.OfType<ComponentData>()
-                            .Select(r => (IGH_Param)r.GhObject);
+                .Select(i => i.GhObject is IGH_Param p ? p : null);
 
             var inputParams = _rightGridView.SelectedItems.OfType<ComponentData>()
-                            .Select(r => (IGH_Param)r.GhObject);
+                .Select(i => i.GhObject is IGH_Param p ? p : null);
 
             foreach (var input in inputParams)
             {
