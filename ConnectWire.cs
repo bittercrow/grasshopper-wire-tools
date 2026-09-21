@@ -22,10 +22,8 @@ namespace WireTools
     #region TODOs 
     // TODO: add 3 states to sorting by clicking on headers
     // todo: grey out rows which are not in the current document
-    // todo: feat: add connect button 
     // todo: feat: add undo list
     // todo: feat: change rows order manually
-    // todo: feat: resolve
     #endregion
 
     class ConnectWireForm : Form
