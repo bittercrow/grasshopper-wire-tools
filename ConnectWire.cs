@@ -9,7 +9,7 @@ using Rhino;
 using Rhino.UI;
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Generic; 
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics.Eventing.Reader;
@@ -220,7 +220,8 @@ namespace WireTools
                 ShowHeader = true,
                 AllowMultipleSelection = true,
                 DataStore = _candidateRows,
-                ContextMenu = CreateContextMenu()
+                ContextMenu = CreateContextMenu(),
+                Visible = false
             };
 
             gridView.ColumnHeaderClick += OnCandidateGridViewColumnHeaderClicked;
