@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WireTools
 {
-    internal static class ColumnHeaders
+    static class ColumnHeaders
     {
         public static (int Enum, string Text) Name => (0, "Name");
         public static (int Enum, string Text) NickName => (1, "Nickname");

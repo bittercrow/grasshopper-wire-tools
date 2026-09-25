@@ -19,24 +19,17 @@ using System.Text.RegularExpressions;
 
 namespace WireTools
 {
-    #region TODOs 
-    // TODO: add 3 states to sorting by clicking on headers
-    // todo: grey out rows which are not in the current document
-    // todo: feat: add undo list
-    // todo: feat: change rows order manually
-    #endregion
-
     class ConnectWireForm : Form
     {
-        readonly FilterCollection<ComponentData> _candidateRows = new FilterCollection<ComponentData>();
-        readonly FilterCollection<ComponentData> _inputRows = new FilterCollection<ComponentData>();
-        readonly FilterCollection<ComponentData> _outputRows = new FilterCollection<ComponentData>();
+        readonly FilterCollection<ComponentData> _candidateRows = new();
+        readonly FilterCollection<ComponentData> _inputRows = new();
+        readonly FilterCollection<ComponentData> _outputRows = new();
         readonly GridView _candidateGridView;
         readonly GridView _leftGridView;
         readonly GridView _rightGridView;
         readonly SearchBox _searchBox;
         GH_Document _ghDocument;
-        GH_NamedView _ghNamedView = new GH_NamedView();
+        GH_NamedView _ghNamedView = new();
         int _namedViewLength = 200;
         float _zoomFactor = 2;
 
@@ -780,3 +773,10 @@ namespace WireTools
         }
     }
 }
+
+#region TODOs 
+// TODO: add 3 states to sorting by clicking on headers
+// todo: grey out rows which are not in the current document
+// todo: feat: add undo list
+// todo: feat: change rows order manually
+#endregion
