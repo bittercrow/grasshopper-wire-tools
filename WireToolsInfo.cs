@@ -39,12 +39,7 @@ namespace WireTools
 
     public class AddCommandsPriority : GH_AssemblyPriority
     {
-        private ToolStripMenuItem _menuItem = new ToolStripMenuItem
-                                                    (
-                                                       "WireTools",
-                                                       null,
-                                                       OnClick
-                                                    );
+        ToolStripMenuItem _menuItem = new("WireTools", null, OnClick);
 
         public override GH_LoadingInstruction PriorityLoad()
         {
@@ -57,7 +52,7 @@ namespace WireTools
             return GH_LoadingInstruction.Proceed;
         }
 
-        private void OnCanvasCreated(GH_Canvas canvas)
+        void OnCanvasCreated(GH_Canvas canvas)
         {
             Instances.CanvasCreated -= OnCanvasCreated; // Only once
 
@@ -76,7 +71,7 @@ namespace WireTools
 
         }
 
-        private void AddToolbarButton()
+        void AddToolbarButton()
         {
             Type editorType = typeof(GH_DocumentEditor);
             BindingFlags binding = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetField;
@@ -92,12 +87,12 @@ namespace WireTools
             toolstrip.Items.Add("WT", null, OnClick);
         }
 
-        private static void OnClick(object sender, EventArgs e)
+        static void OnClick(object sender, EventArgs e)
         {
             ConnectWire.ShowForm();
         }
 
-        private void AddMenuItem(GH_DocumentEditor editor)
+        void AddMenuItem(GH_DocumentEditor editor)
         {
             var menuItem = new ToolStripMenuItem("WT");
             menuItem.DropDownItems.AddRange(new ToolStripItem[]
@@ -113,10 +108,12 @@ namespace WireTools
             menuStrip.PerformLayout();
         }
 
-        private void RegisterShortcut()
+        void RegisterShortcut()
         {
-            var shortcuts = new List<ToolStripMenuItem>();
-            shortcuts.Add(_menuItem);
+            var shortcuts = new List<ToolStripMenuItem>
+            {
+                _menuItem
+            };
 
             GH_DocumentEditor.AggregateShortcutMenuItems += (sender, e) =>
             {
