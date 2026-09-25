@@ -1,0 +1,10 @@
+---
+name: WireTool
+version: 0.1.0
+authors:
+- TeruS
+description: This plugin adds a wire tool feature to Grasshopper.
+license: MIT
+url: https://github.com/bittercrow/grasshopper-wire-tools
+icon: icon_64.png
+keywords: []
