@@ -9,7 +9,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.IO;
 using System.Reflection;
+using System.Resources;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 
 
@@ -20,7 +23,7 @@ namespace WireTools
         public override string Name => "WireTools";
 
         //Return a 24x24 pixel bitmap to represent this GHA library.
-        public override Bitmap Icon => null;
+        public override Bitmap Icon => Properties.Resources.Icon24;
 
         //Return a short string describing the purpose of this GHA library.
         public override string Description => "This plugin adds Wire Tools to Grasshopper.";
@@ -39,7 +42,7 @@ namespace WireTools
 
     public class AddCommandsPriority : GH_AssemblyPriority
     {
-        ToolStripMenuItem _menuItem = new("WireTools", null, OnClick);
+        ToolStripMenuItem _menuItem = new("WireTools", Properties.Resources.Icon16, OnClick);
 
         public override GH_LoadingInstruction PriorityLoad()
         {
@@ -48,6 +51,10 @@ namespace WireTools
                 Instances.CanvasCreated += OnCanvasCreated;
             }
             catch { return GH_LoadingInstruction.Abort; }
+
+            // Add the plugin icon 16x16 to the component tabs
+            //Instances.ComponentServer.AddCategoryIcon("WireTools", Properties.Resources.Icon16);
+            //Instances.ComponentServer.AddCategorySymbolName(fullCategoryName: "WireTools", symbol: 'W');
 
             return GH_LoadingInstruction.Proceed;
         }
@@ -84,7 +91,7 @@ namespace WireTools
             if (toolstrip == null)
                 return;
 
-            toolstrip.Items.Add("WT", null, OnClick);
+            toolstrip.Items.Add(null, Properties.Resources.Icon24, OnClick);
         }
 
         static void OnClick(object sender, EventArgs e)
@@ -94,7 +101,7 @@ namespace WireTools
 
         void AddMenuItem(GH_DocumentEditor editor)
         {
-            var menuItem = new ToolStripMenuItem("WT");
+            var menuItem = new ToolStripMenuItem("WireTools");  // Dropdown of Menu bar
             menuItem.DropDownItems.AddRange(new ToolStripItem[]
             {
                 _menuItem,

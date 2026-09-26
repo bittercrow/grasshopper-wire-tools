@@ -77,6 +77,7 @@ namespace WireTools
             Padding = new Padding(5);
             Owner = editor ?? throw new InvalidOperationException("Grasshopper not found.");
             Content = layout;
+            Icon = WireTools.Properties.Resources.AppIcon.ToEto();
             this.UseRhinoStyle();
         }
 
