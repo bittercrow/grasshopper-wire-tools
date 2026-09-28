@@ -367,3 +367,4 @@ FodyWeavers.xsd
 
 # Rhino/Grasshopper VS Code config
 .vscode/
+/.contextkeeper/.git-branches
