@@ -1,6 +1,6 @@
 ---
 name: WireTool
-version: 0.1.0
+version: $version
 authors:
 - TeruS
 description: This plugin adds a wire tool feature to Grasshopper.
