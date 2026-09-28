@@ -368,3 +368,4 @@ FodyWeavers.xsd
 # Rhino/Grasshopper VS Code config
 .vscode/
 .history/
+.contextkeeper/.git-branches
