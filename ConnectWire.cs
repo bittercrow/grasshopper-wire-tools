@@ -506,6 +506,26 @@ namespace WireTools
         {
             switch (e.Key)
             {
+                case Keys.Up:
+                {
+                    if (sender is GridView gridView)
+                    {
+                        MoveUpRows(gridView, _outputRows);
+                    }
+                    e.Handled = true;
+                    break;
+                }
+
+                case Keys.Down:
+                {
+                    if (sender is GridView gridView)
+                    {
+                        MoveDownRows(gridView, _outputRows);
+                    }
+                    e.Handled = true;
+                    break;
+                }
+
                 case Keys.Delete:
                 {
                     if (sender is GridView gridView)
@@ -526,6 +546,40 @@ namespace WireTools
                     break;
                 }
             }
+        }
+
+        static void MoveUpRows(GridView gridView, FilterCollection<ComponentData> collection)
+        {
+            var arr = gridView.SelectedRows.OrderBy(r => r);
+
+            if (arr.First() == 0) { return; }
+
+            foreach (int index in arr)
+            {
+                var temp = collection[index];
+                collection.RemoveAt(index);
+                collection.Insert(index - 1, temp);
+                gridView.SelectRow(index - 1);
+            }
+
+            gridView.Focus();
+        }
+
+        static void MoveDownRows(GridView gridView, FilterCollection<ComponentData> collection)
+        {
+            var arr = gridView.SelectedRows.OrderByDescending(r => r);
+
+            if (arr.First() == collection.Count - 1) { return; }
+
+            foreach (int index in arr)
+            {
+                var temp = collection[index];
+                collection.RemoveAt(index);
+                collection.Insert(index + 1, temp);
+                gridView.SelectRow(index + 1);
+            }
+
+            gridView.Focus();
         }
 
         GridView CreateRightGridView()
@@ -607,6 +661,26 @@ namespace WireTools
         {
             switch (e.Key)
             {
+                case Keys.Up:
+                {
+                    if (sender is GridView gridView)
+                    {
+                        MoveUpRows(gridView, _inputRows);
+                    }
+                    e.Handled = true;
+                    break;
+                }
+
+                case Keys.Down:
+                {
+                    if (sender is GridView gridView)
+                    {
+                        MoveDownRows(gridView, _inputRows);
+                    }
+                    e.Handled = true;
+                    break;
+                }
+
                 case Keys.Delete:
                 {
                     if (sender is GridView gridView)
