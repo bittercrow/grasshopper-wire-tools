@@ -510,7 +510,7 @@ namespace WireTools
                 {
                     if (sender is GridView gridView)
                     {
-                        MoveUpRows(gridView, _outputRows);
+                        MoveRowsUp(gridView, _outputRows);
                     }
                     e.Handled = true;
                     break;
@@ -520,7 +520,7 @@ namespace WireTools
                 {
                     if (sender is GridView gridView)
                     {
-                        MoveDownRows(gridView, _outputRows);
+                        MoveRowsDown(gridView, _outputRows);
                     }
                     e.Handled = true;
                     break;
@@ -548,13 +548,13 @@ namespace WireTools
             }
         }
 
-        static void MoveUpRows(GridView gridView, FilterCollection<ComponentData> collection)
+        static void MoveRowsUp(GridView gridView, FilterCollection<ComponentData> collection)
         {
-            var arr = gridView.SelectedRows.OrderBy(r => r);
+            var selectedRows = gridView.SelectedRows.OrderBy(r => r);
 
-            if (arr.First() == 0) { return; }
+            if (!selectedRows.Any() || selectedRows.First() == 0) { return; }
 
-            foreach (int index in arr)
+            foreach (int index in selectedRows)
             {
                 var temp = collection[index];
                 collection.RemoveAt(index);
@@ -565,13 +565,13 @@ namespace WireTools
             gridView.Focus();
         }
 
-        static void MoveDownRows(GridView gridView, FilterCollection<ComponentData> collection)
+        static void MoveRowsDown(GridView gridView, FilterCollection<ComponentData> collection)
         {
-            var arr = gridView.SelectedRows.OrderByDescending(r => r);
+            var selectedRows = gridView.SelectedRows.OrderByDescending(r => r);
 
-            if (arr.First() == collection.Count - 1) { return; }
+            if (!selectedRows.Any() || selectedRows.First() == collection.Count - 1) { return; }
 
-            foreach (int index in arr)
+            foreach (int index in selectedRows)
             {
                 var temp = collection[index];
                 collection.RemoveAt(index);
@@ -665,7 +665,7 @@ namespace WireTools
                 {
                     if (sender is GridView gridView)
                     {
-                        MoveUpRows(gridView, _inputRows);
+                        MoveRowsUp(gridView, _inputRows);
                     }
                     e.Handled = true;
                     break;
@@ -675,7 +675,7 @@ namespace WireTools
                 {
                     if (sender is GridView gridView)
                     {
-                        MoveDownRows(gridView, _inputRows);
+                        MoveRowsDown(gridView, _inputRows);
                     }
                     e.Handled = true;
                     break;
