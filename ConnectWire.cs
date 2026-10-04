@@ -456,7 +456,8 @@ namespace WireTools
                 ShowHeader = true,
                 AllowMultipleSelection = true,
                 DataStore = _outputRows,
-                ContextMenu = CreateContextMenu()
+                ContextMenu = CreateContextMenu(),
+                ToolTip = LeftGridViewToolTip()
             };
 
             gridView.ColumnHeaderClick += OnLeftGridViewColumnHeaderClicked;
@@ -495,6 +496,11 @@ namespace WireTools
             });
 
             return gridView;
+        }
+
+        static string LeftGridViewToolTip()
+        {
+            return "Reorder ( \u2191/\u2193 + Ctrl )";
         }
 
         private void OnLeftGridViewColumnHeaderClicked(object sender, GridColumnEventArgs e)
@@ -589,7 +595,8 @@ namespace WireTools
                 ShowHeader = true,
                 AllowMultipleSelection = true,
                 DataStore = _inputRows,
-                ContextMenu = CreateContextMenu()
+                ContextMenu = CreateContextMenu(),
+                ToolTip = RightGridViewToolTip()
             };
 
             gridView.ColumnHeaderClick += OnRightGridViewColumnHeaderClicked;
@@ -650,6 +657,11 @@ namespace WireTools
             });
 
             return gridView;
+        }
+
+        static string RightGridViewToolTip()
+        {
+            return "Reorder ( \u2191/\u2193 + Ctrl )";
         }
 
         private void OnRightGridViewColumnHeaderClicked(object sender, GridColumnEventArgs e)
