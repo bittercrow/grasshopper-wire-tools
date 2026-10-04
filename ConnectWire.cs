@@ -504,9 +504,9 @@ namespace WireTools
 
         void OnKeyDownLeftGridView(object sender, KeyEventArgs e)
         {
-            switch (e.Key)
+            switch (e.Key, e.Modifiers)
             {
-                case Keys.Up:
+                case (Keys.Up, Keys.Control):
                 {
                     if (sender is GridView gridView)
                     {
@@ -516,7 +516,7 @@ namespace WireTools
                     break;
                 }
 
-                case Keys.Down:
+                case (Keys.Down, Keys.Control):
                 {
                     if (sender is GridView gridView)
                     {
@@ -526,7 +526,7 @@ namespace WireTools
                     break;
                 }
 
-                case Keys.Delete:
+                case (Keys.Delete, Keys.None):
                 {
                     if (sender is GridView gridView)
                     {
@@ -536,7 +536,7 @@ namespace WireTools
                     break;
                 }
 
-                case Keys.Escape:
+                case (Keys.Escape, Keys.None):
                 {
                     if (sender is GridView gridView)
                     {
@@ -659,9 +659,9 @@ namespace WireTools
 
         void OnKeyDownRightGridView(object sender, KeyEventArgs e)
         {
-            switch (e.Key)
+            switch (e.Key, e.Modifiers)
             {
-                case Keys.Up:
+                case (Keys.Up, Keys.Control):
                 {
                     if (sender is GridView gridView)
                     {
@@ -671,7 +671,7 @@ namespace WireTools
                     break;
                 }
 
-                case Keys.Down:
+                case (Keys.Down, Keys.Control):
                 {
                     if (sender is GridView gridView)
                     {
@@ -681,7 +681,7 @@ namespace WireTools
                     break;
                 }
 
-                case Keys.Delete:
+                case (Keys.Delete, Keys.None):
                 {
                     if (sender is GridView gridView)
                     {
@@ -691,7 +691,7 @@ namespace WireTools
                     break;
                 }
 
-                case Keys.Escape:
+                case (Keys.Escape, Keys.None):
                 {
                     if (sender is GridView gridView)
                     {
